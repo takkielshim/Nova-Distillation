@@ -7,7 +7,6 @@ Amazon Bedrock Nova 모델 Customization 툴킷입니다. 모델 증류(distilla
 - **모델 증류**: Nova Premier에서 Nova Lite로 지식 증류를 통한 커스텀 모델 생성
 - **모델 배포**: 추론을 위한 커스텀 모델 온디맨드 배포
 - **모델 평가**: LLM-as-a-Judge 방법론을 활용한 모델 성능 평가
-- **MMLU-Pro 벤치마킹**: MMLU-Pro 데이터셋을 활용한 표준화된 벤치마킹
 - **설정 가능한 매개변수**: 모든 스크립트가 명령행 인자를 통한 유연한 설정 지원
 
 ## 📋 사전 요구사항
@@ -74,7 +73,6 @@ aws configure
 ├── run_model_deployment.py       # 모델 배포 스크립트
 ├── run_evaluation.py             # 모델 평가 실행기
 ├── llm_judge_evaluation.py       # LLM-as-a-Judge 평가 프레임워크
-├── run_mmlu_pro_benchmark.py     # MMLU-Pro 벤치마킹 도구
 ├── utils.py                      # AWS 작업을 위한 유틸리티 함수
 ├── train.jsonl                   # 증류용 샘플 훈련 데이터
 └── test.jsonl                    # 평가용 샘플 테스트 데이터
@@ -143,30 +141,6 @@ python run_evaluation.py \
   --region us-west-2
 ```
 
-### 4. MMLU-Pro 벤치마킹
-
-MMLU-Pro 데이터셋에서 표준화된 벤치마크를 실행합니다:
-
-```bash
-# 20개 질문으로 기본 벤치마크
-python run_mmlu_pro_benchmark.py --num-questions 20
-
-# 특정 모델들 테스트
-python run_mmlu_pro_benchmark.py \
-  --models nova-pro nova-lite \
-  --num-questions 50
-
-# 커스텀 모델과 함께 테스트
-python run_mmlu_pro_benchmark.py \
-  --custom-model-id arn:aws:bedrock:us-east-1:123456789012:custom-model-deployment/abc123 \
-  --num-questions 30
-
-# 특정 카테고리 테스트
-python run_mmlu_pro_benchmark.py \
-  --categories mathematics physics \
-  --num-questions 25 \
-  --region us-west-2
-```
 
 ## 📊 데이터 형식
 
@@ -210,16 +184,6 @@ python run_mmlu_pro_benchmark.py \
 | `--custom-model-id` | 커스텀 모델 ARN/ID | None |
 | `--region` | AWS 리전 | `us-east-1` |
 
-### 벤치마킹 옵션
-
-| 매개변수 | 설명 | 기본값 |
-|---------|------|--------|
-| `--num-questions` | 테스트할 질문 수 | `20` |
-| `--models` | 테스트할 모델들 | 모든 사용 가능한 모델 |
-| `--categories` | 테스트할 특정 카테고리 | 모든 카테고리 |
-| `--random-seed` | 재현성을 위한 랜덤 시드 | `42` |
-| `--rate-limit-delay` | API 호출 간 지연 시간(초) | `0.5` |
-
 ## 📈 출력 파일
 
 툴킷은 다양한 출력 파일을 생성합니다:
@@ -229,9 +193,6 @@ python run_mmlu_pro_benchmark.py \
 - **평가**: 
   - `evaluation_results_YYYYMMDD_HHMMSS.json` - 상세 결과
   - `evaluation_results_YYYYMMDD_HHMMSS_summary.csv` - 요약 통계
-- **벤치마킹**:
-  - `mmlu_pro_benchmark_results_YYYYMMDD_HHMMSS.json` - 상세 결과
-  - `mmlu_pro_benchmark_results_YYYYMMDD_HHMMSS_summary.csv` - 요약 통계
 
 
-**참고**: 이 툴킷은 교육 및 개발 목적으로 제작되었습니다. 프로덕션 환경에서 사용할 때는 항상 AWS 모범 사례와 보안 가이드라인을 따르세요.
+**참고**: 이 툴킷은 교육 및 개발 목적으로 제작되었습니다. 프로덕션 환경에서 사용할 때는 AWS 모범 사례와 보안 가이드라인을 따르세요.
